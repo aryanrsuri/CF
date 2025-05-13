@@ -1,0 +1,50 @@
+[263A]
+cin is powerful, it will parse out the type of the variable you use to grba it, i.e there is a matrix in multiple lines
+you can use 
+
+```
+ int value, r = 0, c = 0;
+  for (size_t i = 0; i <= 4; ++i) {
+    for (size_t j = 0; j <= 4; ++j) {
+      cin >> value;
+      if (value == 1) {
+        r = i;
+        c = j;
+      }
+    }
+  }
+```
+
+[112A]
+Things that are trivial in python, c++ has non-trival solutions for, here is the way of converting a std::string to lowercase
+
+```
+  std::transform(a.begin(), a.end(), a.begin(),
+                 [](unsigned char c) { return std::tolower(c); });
+ ```
+
+[339A]
+
+Essentially get the ints as a vector, sort in ascending order, then output with '+' in between each char
+
+[236A]
+
+Coversion of a char[] (string) to a set<char> 
+
+```
+  std::set<char> ch(s.begin(), s.end());
+```
+
+[791A]
+
+a,b a<=b 
+da/dy = 3*a
+db/dy = 2*b
+
+y? = a > b
+
+simple calculate weight y on y until a > b
+
+[96A]
+
+set prev to be first char in s ; loop through s ; if curr == prev then count++ ; if count > 7 cout YES else NO; 
