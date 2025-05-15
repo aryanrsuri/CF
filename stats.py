@@ -9,7 +9,6 @@ from datetime import datetime
 class CP(object):
     def __init__(self, path: str = "./comprog.sqlite3"):
         self._conn = sqlite3.connect(path)
-        self._curs = self._conn.cursor()
 
     def _load(self):
         # Load both tables
