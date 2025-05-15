@@ -3,6 +3,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
+import numpy as np
 from datetime import datetime
 
 
@@ -19,9 +20,23 @@ class CP(object):
         # Fixme: Rename back to 
         df = self._problems
         df["time_started"] = pd.to_datetime(df["time_started"])
-        df["focus_efficiency"] = df["focus_factor"] / df["time_spent"]
+        df["focus_efficiency"] = (df["focus_factor"]) / df["time_spent"]
+
+        df["focus_efficiency"] = df["focus_factor"] / (df["time_spent"] + 1e-6)
         df["normalized_difficulty_by_focus"] = (df["difficulty"] / df["focus_efficiency"]  ) / 5
         df["normalized_difficulty_by_time_spent"] = df["difficulty"] * (df["time_spent"] / df["time_spent"].max())
+        df["normalized_difficulty_by_help_used"] = df["difficulty"] * (df["used_help"] / df["used_help"].max())
+
+        # Fixme : use these in the plots
+        df["perceived_difficulty"] = (
+            df["difficulty"] * df["time_spent"] / (df["focus_factor"] + 0.1)
+        ) * (1 + 0.5 * df["used_help"])
+        df["normalized_difficulty_by_time"] = df["difficulty"] * (
+            df["time_spent"] / df["time_spent"].mean()
+        )
+        df["difficulty_time_log_scaled"] = df["difficulty"] * np.log1p(df["time_spent"])
+        df["difficulty_with_help_penalty"] = df["difficulty"] * (1 + 0.5 * df["used_help"])
+        df["difficulty_per_unit_focus"] = df["difficulty"] / (df["focus_factor"] + 0.1)
         self._problems = df
         return self._problems
 
@@ -33,8 +48,8 @@ class CP(object):
         with open(output_path, "w") as f:
             f.write("=== Average Time Spent per Difficulty ===\n")
             f.write(df.groupby("difficulty")["time_spent"].mean().round(2).to_string())
-            f.write("\n\n=== Scaled Difficulty (first 10 rows) ===\n")
-            f.write(df[["problem_id", "time_spent", "focus_factor", "difficulty", "normalized_difficulty_by_focus", "normalized_difficulty_by_time_spent"]].head(10).to_string(index=False))
+            f.write("\n\n=== Scaled Difficulties ===\n")
+            f.write(df[["problem_id", "time_spent", "focus_factor", "difficulty", "normalized_difficulty_by_focus", "normalized_difficulty_by_time_spent", "normalized_difficulty_by_help_used"]].drop_duplicates().to_string())
             f.write("\n\n=== Avg Time Spent by Help Usage ===\n")
             f.write(df.groupby("used_help")["time_spent"].mean().round(2).to_string())
             f.write("\n\n=== Avg Time Spent per Type ===\n")
@@ -45,7 +60,11 @@ class CP(object):
             f.write(df.groupby("type")["normalized_difficulty_by_focus"].mean().round(2).to_string())
             f.write("\n\n=== Avg Normed Difficulty per Type ===\n")
             f.write(df.groupby("type")["normalized_difficulty_by_time_spent"].mean().round(2).to_string())
+            f.write("\n\n=== Avg Normed Difficulty per Help ===\n")
+            f.write(df.groupby("type")["normalized_difficulty_by_help_used"].mean().round(2).to_string())
             f.write("\n\n=== Nominal Problems+Types ===\n")
+            df = df.drop(columns=["notes"]
+                         )
             f.write(df.to_string(index=False))
 
         # Plot grid setup
@@ -96,7 +115,6 @@ class CP(object):
         ax7.set_title("Perceived Difficulty by Type")
         ax7.tick_params(axis='x', rotation=45)
 
-        
 
         # Type Heatmap
         ax8 = fig.add_subplot(gs[2, 2])
