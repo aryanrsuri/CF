@@ -1,0 +1,80 @@
+=== Average Time Spent per Difficulty ===
+difficulty
+800      8.29
+1000    21.45
+
+=== Scaled Difficulties ===
+   problem_id  time_spent  focus_factor  difficulty  normalized_difficulty_by_focus  normalized_difficulty_by_time_spent  normalized_difficulty_by_help_used
+0        263A       15.00             5         800                      480.000032                           380.952381                                 NaN
+1        266A       10.10             5         800                      323.200032                           256.507937                                 NaN
+2        617A        3.00             4         800                      120.000040                            76.190476                                 NaN
+3          1A       23.50             2        1000                     2350.000100                           746.031746                                 NaN
+4        118A       31.20             1        1000                     6240.000200                           990.476190                               500.0
+5        546A        8.75             5         800                      280.000032                           222.222222                                 NaN
+8         59A        9.00             4         800                      360.000040                           228.571429                               800.0
+9        977A        3.00             5         800                       96.000032                            76.190476                                 0.0
+10        69A        5.50             3        1000                      366.666733                           174.603175                                 0.0
+12       122A       31.50             4        1000                     1575.000050                          1000.000000                              1000.0
+
+=== Avg Time Spent by Help Usage ===
+used_help
+0.0     4.67
+1.0    31.20
+2.0    24.00
+
+=== Avg Time Spent per Type ===
+type
+bf                20.12
+implementation     9.75
+math               8.75
+number_theory     31.50
+string            20.10
+
+=== Avg Focus Efficiency per Type ===
+type
+bf                0.349
+implementation    0.483
+math              0.840
+number_theory     0.127
+string            0.238
+
+=== Avg Scaled Difficulty per Type ===
+type
+bf                 927.50
+implementation     375.56
+math               642.53
+number_theory     1575.00
+string            3300.00
+
+=== Avg Normed Difficulty per Type ===
+type
+bf                 611.11
+implementation     259.26
+math               259.05
+number_theory     1000.00
+string             609.52
+
+=== Avg Normed Difficulty per Help ===
+type
+bf                1000.0
+implementation       0.0
+math                 0.0
+number_theory     1000.0
+string             650.0
+
+=== Nominal Problems+Types ===
+problem_id  difficulty  time_spent review_match contest_id  focus_factor              time_started  used_help  cheesed  mark_for_review  type_id           type sub_type  focus_efficiency  normalized_difficulty_by_focus  normalized_difficulty_by_time_spent  normalized_difficulty_by_help_used  perceived_difficulty  normalized_difficulty_by_time  difficulty_time_log_scaled  difficulty_with_help_penalty  difficulty_per_unit_focus
+      263A         800       15.00         None       None             5 2025-05-13 21:50:45+00:00        NaN      NaN              NaN      2.0 implementation     None          0.333333                      480.000032                           380.952381                                 NaN                   NaN                     861.317611                 2218.070978                           NaN                 156.862745
+      266A         800       10.10                                     5 2025-05-13 22:10:45+00:00        NaN      NaN              NaN      NaN            NaN      NaN          0.495049                      323.200032                           256.507937                                 NaN                   NaN                     579.953858                 1925.556087                           NaN                 156.862745
+      617A         800        3.00         None       None             4 2025-05-13 22:30:45+00:00        NaN      NaN              NaN      1.0           math     None          1.333333                      120.000040                            76.190476                                 NaN                   NaN                     172.263522                 1109.035489                           NaN                 195.121951
+        1A        1000       23.50         None       None             2 2025-05-13 20:02:19+00:00        NaN      NaN              NaN      3.0           math     None          0.085106                     2350.000100                           746.031746                                 NaN                   NaN                    1686.746988                 3198.673118                           NaN                 476.190476
+      118A        1000       31.20         None       None             1 2025-05-13 20:51:19+00:00        1.0      NaN              NaN      5.0         string     None          0.032051                     6240.000200                           990.476190                               500.0          42545.454545                    2239.425788                 3471.966453                        1500.0                 909.090909
+      546A         800        8.75         None       None             5 2025-05-13 22:52:19+00:00        NaN      NaN              NaN      4.0           math     None          0.571429                      280.000032                           222.222222                                 NaN                   NaN                     502.435273                 1821.813828                           NaN                 156.862745
+      546A         800        8.75         None       None             5 2025-05-13 22:52:19+00:00        NaN      NaN              NaN      6.0             bf     None          0.571429                      280.000032                           222.222222                                 NaN                   NaN                     502.435273                 1821.813828                           NaN                 156.862745
+      546A         800        8.75         None       None             5 2025-05-13 22:52:19+00:00        NaN      NaN              NaN      7.0 implementation     None          0.571429                      280.000032                           222.222222                                 NaN                   NaN                     502.435273                 1821.813828                           NaN                 156.862745
+       59A         800        9.00                                     4 2025-05-14 20:30:00+00:00        2.0      NaN              NaN      8.0         string     None          0.444444                      360.000040                           228.571429                               800.0           3512.195122                     516.790567                 1842.068074                        1600.0                 195.121951
+      977A         800        3.00                                     5 2025-05-14 20:30:45+00:00        0.0      NaN              NaN      9.0           math     None          1.666666                       96.000032                            76.190476                                 0.0            470.588235                     172.263522                 1109.035489                         800.0                 156.862745
+       69A        1000        5.50                                     3 2025-05-13 20:50:45+00:00        0.0      NaN              NaN     10.0 implementation     None          0.545454                      366.666733                           174.603175                                 0.0           1774.193548                     394.770572                 1871.802177                        1000.0                 322.580645
+       69A        1000        5.50                                     3 2025-05-13 20:50:45+00:00        0.0      NaN              NaN     11.0           math     None          0.545454                      366.666733                           174.603175                                 0.0           1774.193548                     394.770572                 1871.802177                        1000.0                 322.580645
+      122A        1000       31.50                                     4 2025-05-14 22:30:45+00:00        2.0      1.0              1.0     12.0  number_theory   modulo          0.126984                     1575.000050                          1000.000000                              1000.0          15365.853659                    2260.958729                 3481.240089                        2000.0                 243.902439
+      122A        1000       31.50                                     4 2025-05-14 22:30:45+00:00        2.0      1.0              1.0     13.0             bf     None          0.126984                     1575.000050                          1000.000000                              1000.0          15365.853659                    2260.958729                 3481.240089                        2000.0                 243.902439

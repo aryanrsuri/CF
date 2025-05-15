@@ -2,6 +2,3 @@
 .DS_Store
 *.geany
 *.sqlite3
-stats/
-stats/*.png
-stats/*.txt
