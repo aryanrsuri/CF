@@ -24,23 +24,22 @@ class CP(object):
 
         df["focus_efficiency"] = df["focus_factor"] / (df["time_spent"] + 1e-6)
         df["normalized_difficulty_by_focus"] = (df["difficulty"] / df["focus_efficiency"]  ) / 5
-        df["normalized_difficulty_by_time_spent"] = df["difficulty"] * (df["time_spent"] / df["time_spent"].max())
-        df["normalized_difficulty_by_help_used"] = df["difficulty"] * (df["used_help"] / df["used_help"].max())
+        df["normalized_difficulty_by_time_spent"] = df["difficulty"] * (df["time_spent"] / df["time_spent"].mean())
+        df["normalized_difficulty_by_help_used"] = df["difficulty"] * (df["used_help"] / df["used_help"].mean())
 
-        # Fixme : use these in the plots
-        df["perceived_difficulty"] = (
-            df["difficulty"] * df["time_spent"] / (df["focus_factor"] + 0.1)
-        ) * (1 + 0.5 * df["used_help"])
-        df["normalized_difficulty_by_time"] = df["difficulty"] * (
-            df["time_spent"] / df["time_spent"].mean()
-        )
-        df["difficulty_time_log_scaled"] = df["difficulty"] * np.log1p(df["time_spent"])
-        df["difficulty_with_help_penalty"] = df["difficulty"] * (1 + 0.5 * df["used_help"])
-        df["difficulty_per_unit_focus"] = df["difficulty"] / (df["focus_factor"] + 0.1)
+        # df["perceived_difficulty"] = (
+        #     df["difficulty"] * df["time_spent"] / (df["focus_factor"] + 0.1)
+        # ) * (1 + 0.5 * df["used_help"])
+        # df["normalized_difficulty_by_time"] = df["difficulty"] * (
+        #     df["time_spent"] / df["time_spent"].mean()
+        # )
+        # df["difficulty_time_log_scaled"] = df["difficulty"] * np.log1p(df["time_spent"])
+        # df["difficulty_with_help_penalty"] = df["difficulty"] * (1 + 0.5 * df["used_help"])
+        # df["difficulty_per_unit_focus"] = df["difficulty"] / (df["focus_factor"] + 0.1)
         self._problems = df
         return self._problems
 
-    def _stats(self):
+    def _stats(self, ):
         df = self._problems
         timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         output_path = f"./stats/{timestamp}_report.txt"
@@ -63,10 +62,15 @@ class CP(object):
             f.write("\n\n=== Avg Normed Difficulty per Help ===\n")
             f.write(df.groupby("type")["normalized_difficulty_by_help_used"].mean().round(2).to_string())
             f.write("\n\n=== Nominal Problems+Types ===\n")
-            df = df.drop(columns=["notes"]
-                         )
+            df = df.drop(columns=["notes"])
             f.write(df.to_string(index=False))
 
+
+        with open(output_path, "r") as f:
+            for line in f.readlines():
+                print(line, end="")
+
+        if (False):
         # Plot grid setup
         fig = plt.figure(figsize=(24, 20))
         gs = gridspec.GridSpec(4, 3, figure=fig)
@@ -141,6 +145,7 @@ class CP(object):
 
         plt.tight_layout()
         plt.savefig(f"./stats/{timestamp}_report.png", dpi=800)
+
        
 if __name__ == "__main__":
     c = CP()
