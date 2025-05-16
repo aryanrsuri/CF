@@ -1,0 +1,23 @@
+problem_id: 734A
+date: 2025-05-15T21:41:31-0700
+>>>
+n games where A or D wins
+loop through chars in the string and if A > D Anton A == D Friendship else Danik
+n < 100_000 so can use a int
+<<<
+problem_id: 58A
+date: 2025-05-15T21:41:31-0700
+>>>
+we want to remove chars such that hello is generated
+first i len < 5 immediattley break
+cnat we just check for more letters than just h e l l o ? 
+oh wait we need h e l l o in the string AND more chars so we loop through chars w/ a freq list andwe get {a,1 ; h2; e1; l>2;o2; u} and since h e l l o exists AND more chars than that we are good to go
+failed a test case and realized i did not read the problem and understand it throgouhly, I need to ensure its hello in order h > e > l > l > o
+so assume its good (b=true) then if the order fails, break early and return NO else return YES
+impement>iterate through the chars, and if
+Greedily match "hello" eg can we find an h? yes e yes l yes l no BREAK or l yes o yes:wq
+Bruh it was so simple. left to right pass on the string with a "hello" string i am indexing. Then I just matche hello[i] and if its the current char, i++. if i ==5 then I've reached end of hello and we've matched it
+<<<
+
+
+

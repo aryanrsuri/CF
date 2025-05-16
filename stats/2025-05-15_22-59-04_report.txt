@@ -1,0 +1,93 @@
+=== Average Time Spent per Difficulty ===
+difficulty
+800      9.33
+1000    28.59
+
+=== Scaled Difficulties ===
+problem_id  time_spent  focus_factor  used_help  difficulty  normalized_difficulty_by_focus  normalized_difficulty_by_time_spent  normalized_difficulty_by_help_used
+      263A       15.00             5          0         800                      616.216216                           688.198008                            0.000000
+      266A       10.10             5          0         800                      414.918919                           463.386659                            0.000000
+      617A        3.00             4          0         800                      154.054054                           137.639602                            0.000000
+        1A       23.50             2          0        1000                     3016.891892                          1347.721099                            0.000000
+      118A       31.20             1          1        1000                     8010.810811                          1789.314820                         2111.111111
+      546A        8.75             5          0         800                      359.459459                           401.448838                            0.000000
+       59A        9.00             4          2         800                      462.162162                           412.918805                         3377.777778
+      977A        3.00             5          0         800                      123.243243                           137.639602                            0.000000
+       69A        5.50             3          0        1000                      470.720721                           315.424087                            0.000000
+      122A       31.50             4          2        1000                     2021.959459                          1806.519771                         4222.222222
+      110A       15.50             3          0         800                     1061.261261                           711.137941                            0.000000
+      734A        5.25             5          0         800                      215.675676                           240.869303                            0.000000
+       58A       50.00             4          1        1000                     3209.459459                          2867.491699                         2111.111111
+
+=== Avg Time Spent by Help Usage ===
+used_help
+0     9.85
+1    43.73
+2    24.00
+
+=== Avg Time Spent per Type ===
+type
+bf                20.12
+greedy            50.00
+implementation    11.19
+math               9.88
+number_theory     31.50
+string            23.86
+
+=== Avg Focus Efficiency per Type ===
+type
+bf                0.349
+greedy            0.080
+implementation    0.411
+math              0.733
+number_theory     0.127
+string            0.377
+
+=== Avg Scaled Difficulty per Type ===
+type
+bf                1190.71
+greedy            3209.46
+implementation     626.91
+math               864.27
+number_theory     2021.96
+string            2974.53
+
+=== Avg Normed Difficulty per Type ===
+type
+bf                1103.98
+greedy            2867.49
+implementation     529.05
+math               508.50
+number_theory     1806.52
+string            1327.65
+
+=== Avg Normed Difficulty per Help ===
+type
+bf                2111.11
+greedy            2111.11
+implementation       0.00
+math                 0.00
+number_theory     4222.22
+string            1900.00
+
+=== Nominal Problems+Types ===
+problem_id  difficulty  time_spent  review_match  contest_id  focus_factor              time_started  used_help  cheesed  mark_for_review  type_id           type     sub_type  focus_efficiency  normalized_difficulty_by_focus  normalized_difficulty_by_time_spent  normalized_difficulty_by_help_used
+      263A         800       15.00           NaN         NaN             5 2025-05-13 21:50:45-07:00          0      NaN              NaN      2.0 implementation          NaN          0.333333                      616.216216                           688.198008                            0.000000
+      266A         800       10.10           NaN         NaN             5 2025-05-13 22:10:45-07:00          0      NaN              NaN      NaN            NaN          NaN          0.495050                      414.918919                           463.386659                            0.000000
+      617A         800        3.00           NaN         NaN             4 2025-05-13 22:30:45-07:00          0      NaN              NaN      1.0           math          NaN          1.333333                      154.054054                           137.639602                            0.000000
+        1A        1000       23.50           NaN         NaN             2 2025-05-13 20:02:19-07:00          0      NaN              NaN      3.0           math          NaN          0.085106                     3016.891892                          1347.721099                            0.000000
+      118A        1000       31.20           NaN         NaN             1 2025-05-13 20:51:19-07:00          1      NaN              NaN      5.0         string          NaN          0.032051                     8010.810811                          1789.314820                         2111.111111
+      546A         800        8.75           NaN         NaN             5 2025-05-13 22:52:19-07:00          0      NaN              NaN      4.0           math          NaN          0.571429                      359.459459                           401.448838                            0.000000
+      546A         800        8.75           NaN         NaN             5 2025-05-13 22:52:19-07:00          0      NaN              NaN      6.0             bf          NaN          0.571429                      359.459459                           401.448838                            0.000000
+      546A         800        8.75           NaN         NaN             5 2025-05-13 22:52:19-07:00          0      NaN              NaN      7.0 implementation          NaN          0.571429                      359.459459                           401.448838                            0.000000
+       59A         800        9.00           NaN         NaN             4 2025-05-14 20:30:00-07:00          2      NaN              NaN      8.0         string          NaN          0.444444                      462.162162                           412.918805                         3377.777778
+      977A         800        3.00           NaN         NaN             5 2025-05-14 20:30:45-07:00          0      NaN              NaN      9.0           math          NaN          1.666667                      123.243243                           137.639602                            0.000000
+       69A        1000        5.50           NaN         NaN             3 2025-05-13 20:50:45-07:00          0      NaN              NaN     10.0 implementation          NaN          0.545455                      470.720721                           315.424087                            0.000000
+       69A        1000        5.50           NaN         NaN             3 2025-05-13 20:50:45-07:00          0      NaN              NaN     11.0           math          NaN          0.545455                      470.720721                           315.424087                            0.000000
+      122A        1000       31.50           NaN         NaN             4 2025-05-14 22:30:45-07:00          2      1.0              1.0     12.0  number_theory       modulo          0.126984                     2021.959459                          1806.519771                         4222.222222
+      122A        1000       31.50           NaN         NaN             4 2025-05-14 22:30:45-07:00          2      1.0              1.0     13.0             bf          NaN          0.126984                     2021.959459                          1806.519771                         4222.222222
+      110A         800       15.50           NaN         NaN             3 2025-05-15 19:54:57-07:00          0      NaN              NaN     14.0 implementation          NaN          0.193548                     1061.261261                           711.137941                            0.000000
+      110A         800       15.50           NaN         NaN             3 2025-05-15 19:54:57-07:00          0      NaN              NaN     15.0           math       modulo          0.193548                     1061.261261                           711.137941                            0.000000
+      734A         800        5.25           NaN         NaN             5 2025-05-15 21:15:57-07:00          0      NaN              NaN     16.0         string          NaN          0.952381                      215.675676                           240.869303                            0.000000
+       58A        1000       50.00           NaN         NaN             4 2025-05-15 21:41:31-07:00          1      NaN              NaN     17.0         greedy forward_pass          0.080000                     3209.459459                          2867.491699                         2111.111111
+       58A        1000       50.00           NaN         NaN             4 2025-05-15 21:41:31-07:00          1      NaN              NaN     18.0         string          NaN          0.080000                     3209.459459                          2867.491699                         2111.111111

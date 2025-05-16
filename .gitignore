@@ -2,4 +2,5 @@
 .DS_Store
 *.geany
 *.sqlite3
+*.csv
 stats/*.png

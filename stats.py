@@ -1,54 +1,123 @@
-import sqlite3
+import os
+import glob
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
-import numpy as np
 from datetime import datetime
+
+INITIAL_RATING = 900
+sns.set_palette("deep")
+
+def get_time():
+    return datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
 
 class CP(object):
-    def __init__(self, path: str = "./comprog.sqlite3"):
-        self._conn = sqlite3.connect(path)
-
-    def _load(self):
-        # Load both tables
-        self._problems = pd.read_sql("SELECT * FROM problems", self._conn)
-        self._type = pd.read_sql("SELECT * FROM type", self._conn)
-
+    def __init__(self):
+        self._problems = pd.read_csv("./problems.csv")
+        self._type = pd.read_csv("./tags.csv")
         self._problems = pd.merge(self._problems, self._type, how="left", on="problem_id")
-        # Fixme: Rename back to 
         df = self._problems
         df["time_started"] = pd.to_datetime(df["time_started"])
         df["focus_efficiency"] = (df["focus_factor"]) / df["time_spent"]
-
-        df["focus_efficiency"] = df["focus_factor"] / (df["time_spent"] + 1e-6)
-        df["normalized_difficulty_by_focus"] = (df["difficulty"] / df["focus_efficiency"]  ) / 5
+        df["normalized_difficulty_by_focus"] = (df["difficulty"] / df["focus_efficiency"]  ) / df["focus_factor"].mean()
         df["normalized_difficulty_by_time_spent"] = df["difficulty"] * (df["time_spent"] / df["time_spent"].mean())
         df["normalized_difficulty_by_help_used"] = df["difficulty"] * (df["used_help"] / df["used_help"].mean())
-
-        # df["perceived_difficulty"] = (
-        #     df["difficulty"] * df["time_spent"] / (df["focus_factor"] + 0.1)
-        # ) * (1 + 0.5 * df["used_help"])
-        # df["normalized_difficulty_by_time"] = df["difficulty"] * (
-        #     df["time_spent"] / df["time_spent"].mean()
-        # )
-        # df["difficulty_time_log_scaled"] = df["difficulty"] * np.log1p(df["time_spent"])
-        # df["difficulty_with_help_penalty"] = df["difficulty"] * (1 + 0.5 * df["used_help"])
-        # df["difficulty_per_unit_focus"] = df["difficulty"] / (df["focus_factor"] + 0.1)
         self._problems = df
-        return self._problems
 
-    def _stats(self, ):
+        types_grouped = self._type.groupby('problem_id')['type'].apply(list).reset_index()
+        self.data = (self._problems
+                     .merge(types_grouped, on='problem_id', how='left')
+                     .sort_values('time_started')
+                     .reset_index(drop=True))
+
+    def compute_elo_series(self, initial_rating=INITIAL_RATING, K=32, invert_last=False):
+        """
+        Compute Elo rating history over solves.
+        - initial_rating: starting Elo
+        - K: K-factor
+        - invert_last: if True, treat last solve as a loss (score=0)
+        Returns a list of Elo ratings after each solve.
+        """
+        ratings = []
+        current = initial_rating
+        for idx, row in self.data.iterrows():
+            opp = row['difficulty']
+            score = 1
+            if invert_last and idx == len(self.data) - 1:
+                score = 0
+            expected = 1 / (1 + 10 ** ((opp - current) / 400))
+            current += K * (score - expected)
+            ratings.append(current)
+        return ratings
+
+    def add_elo_columns(self, initial_rating=INITIAL_RATING, K=32):
+        """
+        Adds two new columns to self.data:
+        - 'elo_actual': history with all solves as wins
+        - 'elo_hypothetical': history with last solve flipped to a loss
+        """
+        self.data['elo_actual'] = self.compute_elo_series(initial_rating, K, invert_last=False)
+        self.data['elo_hypothetical'] = self.compute_elo_series(initial_rating, K, invert_last=True)
+
+    def plot_elo(self, log_x=False):
+        """
+        Plot Elo over solve count.
+        - log_x: if True, use log scale on x-axis
+        """
+        if 'elo_actual' not in self.data:
+            raise ValueError("Please run add_elo_columns() first.")
+
+        x = range(1, len(self.data) + 1)
+        plt.plot(x, self.data['elo_actual'], label='Actual Elo')
+        if log_x:
+            plt.xscale('log')
+        plt.title('Elo Rating vs. Solve Count' + (' (Log Scale)' if log_x else ''))
+        plt.xlabel('Solve Count' + (' (log)' if log_x else ''))
+        plt.ylabel('Elo Rating')
+        plt.grid(True)
+        plt.legend()
+        plt.tight_layout()
+        t = get_time()
+        png = glob.glob("./stats/*_elo.png")
+        for file in png:
+            os.remove(file)
+        plt.savefig(f"./stats/{t}_elo.png")
+        print(f"[OK] Elo progression plotted at ./stats/{t}_elo.png")
+
+    def summary(self):
+        """
+        Print current and hypothetical Elo.
+        """
+        if 'elo_actual' not in self.data:
+            self.add_elo_columns()
+        actual = self.data['elo_actual'].iloc[-1]
+        hypo = self.data['elo_hypothetical'].iloc[-1]
+        self.actual = actual
+        print(f"[OK] Current estimated Elo: {round(actual)}")
+        print(f"[OK] Hypothetical Elo if last solve was missed: {round(hypo)}")
+
+
+    def stats(self, img=False):
         df = self._problems
-        timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        txt = glob.glob("./stats/*_report.txt")
+        png = glob.glob("./stats/*_report.png")
+        timestamp = get_time()
         output_path = f"./stats/{timestamp}_report.txt"
+        for file in txt:
+            os.remove(file)
+        if (img):
+            for file in png:
+                os.remove(file)
+
+
 
         with open(output_path, "w") as f:
             f.write("=== Average Time Spent per Difficulty ===\n")
             f.write(df.groupby("difficulty")["time_spent"].mean().round(2).to_string())
             f.write("\n\n=== Scaled Difficulties ===\n")
-            f.write(df[["problem_id", "time_spent", "focus_factor", "difficulty", "normalized_difficulty_by_focus", "normalized_difficulty_by_time_spent", "normalized_difficulty_by_help_used"]].drop_duplicates().to_string())
+            f.write(df[["problem_id", "time_spent", "focus_factor", "used_help", "difficulty", "normalized_difficulty_by_focus", "normalized_difficulty_by_time_spent", "normalized_difficulty_by_help_used"]].drop_duplicates().to_string(index=False))
             f.write("\n\n=== Avg Time Spent by Help Usage ===\n")
             f.write(df.groupby("used_help")["time_spent"].mean().round(2).to_string())
             f.write("\n\n=== Avg Time Spent per Type ===\n")
@@ -66,12 +135,12 @@ class CP(object):
             f.write(df.to_string(index=False))
 
 
-        with open(output_path, "r") as f:
-            for line in f.readlines():
-                print(line, end="")
+        print(f"[OK] Report generated at ./stats/{timestamp}_report.txt")
 
-        if (False):
-        # Plot grid setup
+
+        if not img:
+            return None
+
         fig = plt.figure(figsize=(24, 20))
         gs = gridspec.GridSpec(4, 3, figure=fig)
 
@@ -82,12 +151,12 @@ class CP(object):
 
         # Scatter: Focus vs Time
         ax1 = fig.add_subplot(gs[0, 1])
-        sns.scatterplot(x="focus_factor", y="time_spent", size="difficulty", hue="difficulty", data=df, ax=ax1)
+        sns.scatterplot(x="focus_factor", y="time_spent", hue="difficulty", data=df, ax=ax1)
         ax1.set_title("Focus vs Time Spent")
 
         # Scatter: Time vs Time Started
         ax2 = fig.add_subplot(gs[0, 2])
-        sns.scatterplot(x="time_started", y="time_spent", size="difficulty", hue="difficulty", data=df, ax=ax2)
+        sns.scatterplot(x="time_started", y="time_spent",  hue="difficulty", data=df, ax=ax2)
         ax2.set_title("Time Progression")
 
         # Rolling Time Spent
@@ -144,11 +213,18 @@ class CP(object):
         ax11.set_title("Rolling Perceived Difficulty By Focus")
 
         plt.tight_layout()
-        plt.savefig(f"./stats/{timestamp}_report.png", dpi=800)
+        plt.savefig(f"./stats/{timestamp}_report.png")
 
        
 if __name__ == "__main__":
     c = CP()
-    p = c._load()
-    c._stats()
+    c.stats(img=True)
+    # c.add_elo_columns()
+    # c.summary()
+    # c.plot_elo()
+
+
+
+
+
 
