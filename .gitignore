@@ -1,6 +1,6 @@
-*.out
 .DS_Store
+*.out
 *.geany
 *.sqlite3
 *.csv
-stats/*.png
+*.png
