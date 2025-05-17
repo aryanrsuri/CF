@@ -180,8 +180,10 @@ class CP(object):
 
         # Avg Time per Difficulty Barplot
         ax4 = fig.add_subplot(gs[1, 1])
-        sns.barplot(x="difficulty", y="time_spent", data=df.groupby("difficulty")["time_spent"].mean().reset_index(), ax=ax4)
-        ax4.set_title("Avg Time per Difficulty")
+        df_sorted["rolling_n_diff"] = df_sorted["n_normalized_difficulty_by_time_spent"].rolling(window=3, min_periods=1).mean()
+
+        sns.lineplot(x="time_started", y="rolling_n_diff", data=df_sorted, ax=ax4)
+        ax4.set_title("N-normed Difficulty by Time Spent")
 
         # Help vs Time Boxplot
         ax5 = fig.add_subplot(gs[1, 2])
@@ -219,10 +221,11 @@ class CP(object):
         sns.lineplot(x="time_started", y="rolling_percieved_diff", data=df_sorted, ax=ax10)
         ax10.set_title("Rolling Perceived Difficulty By Time")
 
-        df_sorted["rolling_by_focus_diff"] = df_sorted["normalized_difficulty_by_focus"].rolling(window=3, min_periods=1).mean()
+        # df_sorted["rolling_by_focus_diff"] = df_sorted["normalized_difficulty_by_focus"].rolling(window=3, min_periods=1).mean()
         ax11 = fig.add_subplot(gs[3, 2])
-        sns.lineplot(x="time_started", y="rolling_by_focus_diff", data=df_sorted, ax=ax11)
-        ax11.set_title("Rolling Perceived Difficulty By Focus")
+        sns.boxplot(x="type", y="n_normalized_difficulty_by_time_spent", data=df, ax=ax11)
+        # sns.lineplot(x="time_started", y="rolling_by_focus_diff", data=df_sorted, ax=ax11)
+        # ax11.set_title("Rolling Perceived Difficulty By Focus")
 
         plt.tight_layout()
         plt.savefig(f"./stats/{timestamp}_report.png")
