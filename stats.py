@@ -141,7 +141,7 @@ class CP(object):
             f.write("\n\n=== Avg Normed Difficulty per Help ===\n")
             f.write(df.groupby("type")["normalized_difficulty_by_help_used"].mean().round(2).to_string())
             f.write("\n\n=== Nominal Problems+Types ===\n")
-            df = df.drop(columns=["notes"])
+            df = df.drop(columns=["notes", "Takeaway"])
             f.write(df.to_string(index=False))
 
 
