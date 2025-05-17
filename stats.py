@@ -2,6 +2,7 @@ import os
 import glob
 import pandas as pd
 import seaborn as sns
+import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 from datetime import datetime
@@ -23,7 +24,13 @@ class CP(object):
         df["focus_efficiency"] = (df["focus_factor"]) / df["time_spent"]
         df["normalized_difficulty_by_focus"] = (df["difficulty"] / df["focus_efficiency"]  ) / df["focus_factor"].mean()
         df["normalized_difficulty_by_time_spent"] = df["difficulty"] * (df["time_spent"] / df["time_spent"].mean())
-        df["normalized_difficulty_by_help_used"] = df["difficulty"] * (df["used_help"] / df["used_help"].mean())
+        df["n_normalized_difficulty_by_time_spent"] = (df["difficulty"] * (df["time_spent"] / df["time_spent"].mean()))/(df["difficulty"])
+        df["normalized_difficulty_by_help_used"] = np.where(
+            df["used_help"] == 0,
+            df["difficulty"],
+            df["difficulty"] * (df["used_help"] / df["used_help"].mean())
+        )
+
         self._problems = df
 
         types_grouped = self._type.groupby('problem_id')['type'].apply(list).reset_index()
@@ -102,10 +109,13 @@ class CP(object):
     def stats(self, img=False):
         df = self._problems
         txt = glob.glob("./stats/*_report.txt")
+        csv = glob.glob("./stats/*_report.csv")
         png = glob.glob("./stats/*_report.png")
         timestamp = get_time()
         output_path = f"./stats/{timestamp}_report.txt"
         for file in txt:
+            os.remove(file)
+        for file in csv:
             os.remove(file)
         if (img):
             for file in png:
@@ -117,7 +127,7 @@ class CP(object):
             f.write("=== Average Time Spent per Difficulty ===\n")
             f.write(df.groupby("difficulty")["time_spent"].mean().round(2).to_string())
             f.write("\n\n=== Scaled Difficulties ===\n")
-            f.write(df[["problem_id", "time_spent", "focus_factor", "used_help", "difficulty", "normalized_difficulty_by_focus", "normalized_difficulty_by_time_spent", "normalized_difficulty_by_help_used"]].drop_duplicates().to_string(index=False))
+            f.write(df[["problem_id", "time_spent", "focus_factor", "used_help", "difficulty", "normalized_difficulty_by_focus", "normalized_difficulty_by_time_spent", "n_normalized_difficulty_by_time_spent", "normalized_difficulty_by_help_used"]].drop_duplicates().to_string(index=False))
             f.write("\n\n=== Avg Time Spent by Help Usage ===\n")
             f.write(df.groupby("used_help")["time_spent"].mean().round(2).to_string())
             f.write("\n\n=== Avg Time Spent per Type ===\n")
@@ -135,7 +145,9 @@ class CP(object):
             f.write(df.to_string(index=False))
 
 
-        print(f"[OK] Report generated at ./stats/{timestamp}_report.txt")
+        df.to_csv(f"./stats/{timestamp}_report.csv")
+        print(f"[OK] Report generated at ./stats/{timestamp}_report.txt and .csv")
+
 
 
         if not img:

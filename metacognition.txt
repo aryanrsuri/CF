@@ -33,4 +33,23 @@ Wait this isn't going to work for huge n's since mem limit exceeded. BUT half of
 7 4 : {1 3 4 5 2 2 6 } odds have n//2+1 odd and n//2 even
 8/2 = 4
 so we can find the en and on, if index > on then substract en and find the new kth even number 
+<<< 
+problem_id: 133A
+date: 2025-05-17T13:33:05-0700
+>>> 
+H Q 9 + 
+first though: iterate through the string and simply check if any of the four chars are in the string?
+Too easy?
+Ok the a+b=c fails since + is an expression, doesn't produce output 
+so just check if char == H or Q or 9
+accepted;
+Takeaway: Read and UNDERSTAND the problem first
+<<<
+problem_id: 405A
+date: 2025-05-17T14:41:45-0700
+for all i (in n) columns exists a_i cubes 
+when pivot grav pulls to right
+3 2 1 2
+1 1 1 1
+a_i - (max a_i) + 1
 

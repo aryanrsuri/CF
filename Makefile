@@ -1,5 +1,5 @@
 TARGET = $(firstword $(MAKECMDGOALS))
-FILE = $(TARGET).cc
+FILE = $(TARGET).cpp
 OUT = $(TARGET).out
 
 .PHONY: $(TARGET)
