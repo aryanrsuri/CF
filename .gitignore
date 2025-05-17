@@ -1,4 +1,5 @@
 .DS_Store
+metacognition.txt
 *.out
 *.geany
 *.sqlite3
