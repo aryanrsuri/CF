@@ -3,5 +3,5 @@ metacognition.txt
 *.out
 *.geany
 *.sqlite3
-*.csv
+*.csv*
 *.png
