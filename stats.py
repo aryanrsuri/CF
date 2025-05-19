@@ -198,9 +198,12 @@ class CP(object):
 
         # Type vs Normalized Difficulty
         ax7 = fig.add_subplot(gs[2, 1])
-        sns.boxplot(x="type", y="normalized_difficulty_by_time_spent", data=df, ax=ax7)
-        ax7.set_title("Perceived Difficulty by Type")
-        ax7.tick_params(axis='x', rotation=45)
+        pivot_table_7 = df.pivot_table(values="n_normalized_difficulty_by_time_spent", index="type", columns="difficulty", aggfunc="mean")
+        sns.heatmap(pivot_table_7, annot=True, fmt=".1f", cmap="YlGnBu", ax=ax7)
+        ax7.set_title("N-normed Time Spent Heatmap (Type × Difficulty)")
+        # sns.boxplot(x="type", y="normalized_difficulty_by_time_spent", data=df, ax=ax7)
+        # ax7.set_title("Perceived Difficulty by Type")
+        # ax7.tick_params(axis='x', rotation=45)
 
 
         # Type Heatmap

@@ -5,7 +5,7 @@ OUT = $(TARGET).out
 .PHONY: $(TARGET)
 
 $(TARGET):
-	g++ -std=c++23 -O2 -Wall src/$(FILE) -o $(OUT)
+	g++-14 -std=c++23 -O2 -Wall src/$(FILE) -o $(OUT)
 	@./$(OUT)
 %:: ;
 
