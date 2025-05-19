@@ -6,6 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 from datetime import datetime
+from math import log
 
 INITIAL_RATING = 900
 sns.set_palette("deep")
@@ -24,13 +25,22 @@ class CP(object):
         df["focus_efficiency"] = (df["focus_factor"]) / df["time_spent"]
         df["normalized_difficulty_by_focus"] = (df["difficulty"] / df["focus_efficiency"]  ) / df["focus_factor"].mean()
         df["normalized_difficulty_by_time_spent"] = df["difficulty"] * (df["time_spent"] / df["time_spent"].mean())
-        df["n_normalized_difficulty_by_time_spent"] = (df["difficulty"] * (df["time_spent"] / df["time_spent"].mean()))/(df["difficulty"])
         df["normalized_difficulty_by_help_used"] = np.where(
             df["used_help"] == 0,
             df["difficulty"],
             df["difficulty"] * (df["used_help"] / df["used_help"].mean())
         )
-
+        avg_time_per_difficulty = (
+            df.groupby("difficulty")["time_spent"]
+            .mean()
+            .rename("avg_time_for_difficulty")
+            .reset_index()
+        )
+        df = df.merge(avg_time_per_difficulty, on="difficulty", how="left")
+        a = 0.25  # tuning parameter to control sensitivity
+        time_ratio = df["time_spent"] / df["avg_time_for_difficulty"]
+        df["simple_diff"] = df["difficulty"] * (1 + a * np.log(time_ratio.clip(lower=0.25)))
+        df["n_normalized_difficulty_by_time_spent"] = df["simple_diff"]/df["difficulty"]
         self._problems = df
 
         types_grouped = self._type.groupby('problem_id')['type'].apply(list).reset_index()
@@ -127,7 +137,7 @@ class CP(object):
             f.write("=== Average Time Spent per Difficulty ===\n")
             f.write(df.groupby("difficulty")["time_spent"].mean().round(2).to_string())
             f.write("\n\n=== Scaled Difficulties ===\n")
-            f.write(df[["problem_id", "time_spent", "focus_factor", "used_help", "difficulty", "normalized_difficulty_by_focus", "normalized_difficulty_by_time_spent", "n_normalized_difficulty_by_time_spent", "normalized_difficulty_by_help_used"]].drop_duplicates().to_string(index=False))
+            f.write(df[["problem_id", "time_spent", "focus_factor", "used_help", "difficulty", "normalized_difficulty_by_focus", "normalized_difficulty_by_time_spent", "n_normalized_difficulty_by_time_spent", "simple_diff"]].drop_duplicates().to_string(index=False))
             f.write("\n\n=== Avg Time Spent by Help Usage ===\n")
             f.write(df.groupby("used_help")["time_spent"].mean().round(2).to_string())
             f.write("\n\n=== Avg Time Spent per Type ===\n")
@@ -172,11 +182,12 @@ class CP(object):
         ax2.set_title("Time Progression")
 
         # Rolling Time Spent
+
         df_sorted = df.sort_values("time_started")
-        df_sorted["rolling_avg_time"] = df_sorted["time_spent"].rolling(window=3, min_periods=1).mean()
+        df_sorted["rolling_simple_dff"] = df_sorted["simple_diff"].rolling(window=3, min_periods=1).mean()
         ax3 = fig.add_subplot(gs[1, 0])
-        sns.lineplot(x="time_started", y="rolling_avg_time", data=df_sorted, ax=ax3)
-        ax3.set_title("Rolling Avg Time Spent")
+        sns.lineplot(x="time_started", y="rolling_simple_dff", data=df_sorted, ax=ax3)
+        ax3.set_title("Rolling Simple Diff")
 
         # Avg Time per Difficulty Barplot
         ax4 = fig.add_subplot(gs[1, 1])
