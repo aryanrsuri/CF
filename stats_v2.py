@@ -25,7 +25,7 @@ class CP(object):
         df = df.merge(avg_time_per_difficulty, on="difficulty", how="left")
         a = 0.25  # tuning parameter to control sensitivity
         time_ratio = df["time_spent"] / df["avg_time_for_difficulty"]
-        df["simple_diff"] = df["difficulty"] * (1 + a * np.log(time_ratio.clip(lower=0.25)))
+        df["simple_diff"] = df["difficulty"] * (1 + a * np.log(time_ratio.clip(lower=a))) + df["used_help"] * 2 * a * df["difficulty"]
         df["n_simple_diff"] = df["simple_diff"]/df["difficulty"]
         self._problems = df
 
