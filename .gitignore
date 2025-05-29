@@ -1,7 +1,8 @@
-.DS_Store
 metacognition.txt
+stats/
 *.out
 *.geany
 *.sqlite3
 *.csv*
 *.png
+.DS_Store
